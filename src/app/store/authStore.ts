@@ -22,14 +22,25 @@ export const useAuthStore = create<AuthState>()(
       role: null,
       user: null,
 
-      setAuth: (token, role, user) => set({ token, role, user }),
+      setAuth: (token, role, user) => {
+        set({ token, role, user });
+        // Set cookie for middleware
+        if (typeof window !== 'undefined') {
+          document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Lax`;
+        }
+      },
 
-      clearAuth: () => 
+      clearAuth: () => {
         set({ 
           token: null, 
           role: null, 
           user: null 
-        }),
+        });
+        // Clear cookie
+        if (typeof window !== 'undefined') {
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        }
+      },
     }),
     {
       name: 'auth-storage',
