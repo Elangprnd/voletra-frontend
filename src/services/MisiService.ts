@@ -10,6 +10,11 @@ export const MisiService = {
     const response = await axiosInstance.get(`/misi/${id}`);
     return response.data;
   },
+  getByPelapor: async (status?: string): Promise<Misi[]> => {
+    const params = status && status !== 'All' ? { status } : {};
+    const response = await axiosInstance.get('/misi/pelapor/me', { params });
+    return response.data;
+  },
   create: async (data: CreateMisiRequest): Promise<Misi> => {
     const formData = new FormData();
     formData.append('judul', data.judul);
