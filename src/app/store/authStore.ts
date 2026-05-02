@@ -26,15 +26,27 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isModalOpen: false,
 
-      setAuth: (token, role, user) => set({ token, role, user }),
-      clearAuth: () => 
+      setAuth: (token, role, user) => {
+        set({ token, role, user });
+        // Set cookie for middleware
+        if (typeof window !== 'undefined') {
+          document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Lax`;
+        }
+      },
+
+      clearAuth: () => {
         set({ 
           token: null, 
           role: null, 
           user: null 
-        }),
-        openModal: () => set({ isModalOpen: true }),
-        closeModal: () => set({ isModalOpen: false }),
+        });
+        // Clear cookie
+        if (typeof window !== 'undefined') {
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        }
+      },
+      openModal: () => set({ isModalOpen: true }),
+      closeModal: () => set({ isModalOpen: false }),
     }),
     {
       name: 'auth-storage',

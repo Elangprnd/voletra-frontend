@@ -1,13 +1,21 @@
 export interface Misi {
   id: string;
-  title: string;
-  description: string;
+  judul: string;
+  deskripsi: string;
+  kategori: string;
+  alamat: string;
+  jumlah_relawan: number;
+  foto: string[]; // URLs or file names from backend
   status: string;
-  // Add other fields as necessary
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateMisiRequest {
-  title: string;
-  description: string;
-  // Add other fields as necessary
+  judul: string;
+  deskripsi: string;
+  kategori: string;
+  alamat: string;
+  jumlah_relawan: number;
+  foto: File[];
 }

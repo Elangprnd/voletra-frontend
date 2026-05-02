@@ -1,12 +1,9 @@
 "use client";
-import Hero from "./components/organism/Hero";
-import AuthModal from "./components/organism/AuthModal";
-import MissionSection from "./components/MissionSection";
-import { useAuthStore } from "./store/authStore";
+import Hero from "@/app/components/organism/Hero";
+import AuthModal from "@/app/components/organism/AuthModal";
+import MissionSection from "@/app/components/MissionSection";
 
 export default function Home() {
-  const { token, openModal } = useAuthStore();
-
   return (
     <>
       <Hero />

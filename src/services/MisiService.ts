@@ -11,7 +11,18 @@ export const MisiService = {
     return response.data;
   },
   create: async (data: CreateMisiRequest): Promise<Misi> => {
-    const response = await axiosInstance.post('/misi', data);
+    const formData = new FormData();
+    formData.append('judul', data.judul);
+    formData.append('deskripsi', data.deskripsi);
+    formData.append('kategori', data.kategori);
+    formData.append('alamat', data.alamat);
+    formData.append('jumlah_relawan', data.jumlah_relawan.toString());
+    
+    data.foto.forEach((file) => {
+      formData.append('foto', file);
+    });
+
+    const response = await axiosInstance.post('/misi', formData);
     return response.data;
   },
 };
