@@ -3,6 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/store/authStore";
+import { Misi } from "@/types/misi";
+
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -16,22 +18,14 @@ const icon = L.icon({
   popupAnchor: [1, -34],
 });
 
-interface Mission {
-  id: string;
-  title: string;
-  category: string;
-  lat: number;
-  lng: number;
-}
-
-const DEFAULT_CENTER = { lat: -2.5489, lng: 118.0149 };
+const DEFAULT_CENTER: [number, number] = [-2.5489, 118.0149];
 const DEFAULT_ZOOM = 5;
 
 export default function MapWrapper() {
-  const [missions, setMissions] = useState<Mission[]>([]);
+  const [missions, setMissions] = useState<Misi[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
+  const [selectedMission, setSelectedMission] = useState<Misi | null>(null);
 
   const router = useRouter();
   const { token, openModal, setRedirectTo } = useAuthStore();
@@ -46,45 +40,87 @@ export default function MapWrapper() {
         setMissions([
           {
             id: "1",
-            title: "Distribusi Bantuan Bencana",
-            category: "Emergency Response",
-            lat: 4.695135,
-            lng: 97.750397,
+            judul: "Distribusi Bantuan Bencana",
+            deskripsi: "",
+            kategori: "Emergency Response",
+            alamat: "Torniang, Aceh Timur",
+            latitude: 4.695135,
+            longitude: 97.750397,
+            jumlah_relawan: 100,
+            foto: [],
+            status: "Open",
+            createdAt: "",
+            updatedAt: "",
+          },
+          {
+            id: "1",
+            judul: "Distribusi Bantuan Bencana",
+            deskripsi: "",
+            kategori: "Emergency Response",
+            alamat: "Torniang, Aceh Timur",
+            latitude: 4.695135,
+            longitude: 97.750397,
+            jumlah_relawan: 100,
+            foto: [],
+            status: "Open",
+            createdAt: "",
+            updatedAt: "",
           },
           {
             id: "2",
-            title: "Tanggap Banjir",
-            category: "Emergency Response",
-            lat: 1.748548,
-            lng: 99.173393,
+            judul: "Distribusi Bantuan Bencana",
+            deskripsi: "",
+            kategori: "Emergency Response",
+            alamat: "Torniang, Aceh Timur",
+            latitude: 4.695135,
+            longitude: 97.750397,
+            jumlah_relawan: 100,
+            foto: [],
+            status: "Open",
+            createdAt: "",
+            updatedAt: "",
           },
           {
             id: "3",
-            title: "Peduli Lansia",
-            category: "Healthcare",
-            lat: -6.19413,
-            lng: 106.82254,
+            judul: "Distribusi Bantuan Bencana",
+            deskripsi: "",
+            kategori: "Emergency Response",
+            alamat: "Torniang, Aceh Timur",
+            latitude: 4.695135,
+            longitude: 97.750397,
+            jumlah_relawan: 100,
+            foto: [],
+            status: "Open",
+            createdAt: "",
+            updatedAt: "",
           },
           {
             id: "4",
-            title: "Green Action",
-            category: "Environment",
-            lat: -6.716064,
-            lng: 106.871048,
+            judul: "Distribusi Bantuan Bencana",
+            deskripsi: "",
+            kategori: "Emergency Response",
+            alamat: "Torniang, Aceh Timur",
+            latitude: 4.695135,
+            longitude: 97.750397,
+            jumlah_relawan: 100,
+            foto: [],
+            status: "Open",
+            createdAt: "",
+            updatedAt: "",
           },
           {
             id: "5",
-            title: "Gerakan Papua Mengajar",
-            category: "Education",
-            lat: -3.369025,
-            lng: 135.505905,
-          },
-          {
-            id: "6",
-            title: "Sehat Setara",
-            category: "Healthcare",
-            lat: -7.79558,
-            lng: 110.369492,
+            judul: "Distribusi Bantuan Bencana",
+            deskripsi: "",
+            kategori: "Emergency Response",
+            alamat: "Torniang, Aceh Timur",
+            latitude: 4.695135,
+            longitude: 97.750397,
+            jumlah_relawan: 100,
+            foto: [],
+            status: "Open",
+            createdAt: "",
+            updatedAt: "",
           },
         ]);
       } catch {
@@ -131,19 +167,19 @@ export default function MapWrapper() {
       />
 
       {missions.map((mission) => {
-        if (!mission.lat || !mission.lng) return null;
+        if (!mission.latitude || !mission.longitude) return null;
         return (
           <Marker
             key={mission.id}
-            position={[mission.lat, mission.lng]}
+            position={[mission.latitude, mission.longitude]}
             icon={icon}
           >
             <Popup>
               <div className="min-w-[160px]">
                 <h3 className="font-semibold text-sm text-gray-800 mb-1">
-                  {mission.title}
+                  {mission.judul}
                 </h3>
-                <p className="text-xs text-gray-500 mb-3">{mission.category}</p>
+                <p className="text-xs text-gray-500 mb-3">{mission.kategori}</p>
                 <div className="flex flex-col gap-2">
                   <button
                     onClick={() => handleAuthAction(mission.id)}

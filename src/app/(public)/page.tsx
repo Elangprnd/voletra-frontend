@@ -1,9 +1,15 @@
 "use client";
+<<<<<<< HEAD:src/app/page.tsx
 import Hero from "./components/organism/Hero";
 import AuthModal from "./components/organism/AuthModal";
 import MissionSection from "./components/MissionSection";
 import dynamic from "next/dynamic";
 import { useAuthStore } from "./store/authStore";
+=======
+import Hero from "@/app/components/organism/Hero";
+import AuthModal from "@/app/components/organism/AuthModal";
+import MissionSection from "@/app/components/MissionSection";
+>>>>>>> 2d53d400d9f3a11cf262147eb3ad33cd37275960:src/app/(public)/page.tsx
 
 const MapWrapper = dynamic(() => import('@/app/components/organism/MapWrapper'), {
   ssr: false,
@@ -15,8 +21,6 @@ const MapWrapper = dynamic(() => import('@/app/components/organism/MapWrapper'),
 })
 
 export default function Home() {
-  const { token, openModal } = useAuthStore();
-
   return (
     <>
       <Hero />

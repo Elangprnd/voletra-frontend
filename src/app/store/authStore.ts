@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export interface User {
   id: string;
@@ -13,7 +13,7 @@ interface AuthState {
   user: User | null;
   isModalOpen: boolean;
   redirectTo: string | null;
-  
+
   setAuth: (token: string, role: string, user: User) => void;
   clearAuth: () => void;
   openModal: () => void;
@@ -30,17 +30,32 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isModalOpen: false,
       redirectTo: null,
- 
-      setAuth: (token, role, user) => set({ token, role, user }),
-      clearAuth: () => set({ token: null, role: null, user: null }),
+
       openModal: () => set({ isModalOpen: true }),
       closeModal: () => set({ isModalOpen: false }),
       setRedirectTo: (path) => set({ redirectTo: path }),
       clearRedirectTo: () => set({ redirectTo: null }),
+
+      setAuth: (token, role, user) => {
+        set({ token, role, user });
+        // Set cookie for middleware
+        if (typeof window !== "undefined") {
+          document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Lax`;
+        }
+      },
+
+      clearAuth: () => {
+        set({ token: null, role: null, user: null });
+        // Clear cookie
+        if (typeof window !== "undefined") {
+          document.cookie =
+            "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+      },
     }),
     {
-      name: 'auth-storage',
-      storage: createJSONStorage(() => localStorage), 
+      name: "auth-storage",
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
