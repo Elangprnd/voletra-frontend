@@ -38,7 +38,7 @@ export default function PelaporDashboard() {
           </div>
           <h3 className="text-xl font-semibold text-gray-900">Belum ada tiket misi</h3>
           <p className="text-gray-500 max-w-sm mt-3 text-lg">
-            Anda belum membuat tiket misi. Klik tombol "Buat Tiket Misi" untuk mulai meminta bantuan relawan.
+            Anda belum membuat tiket misi. Klik tombol &quot;Buat Tiket Misi&quot; untuk mulai meminta bantuan relawan.
           </p>
         </div>
       </main>
