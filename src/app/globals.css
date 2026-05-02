@@ -34,3 +34,7 @@ body {
   background-color: var(--color-primary-light);
   color: var(--foreground);
 }
+
+.leaflet-container {
+  z-index: 0;
+}
