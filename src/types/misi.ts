@@ -1,3 +1,5 @@
+export type MisiStatus = 'Open' | 'Ongoing' | 'Completed';
+
 export interface Misi {
   id: string;
   judul: string;
@@ -6,7 +8,7 @@ export interface Misi {
   alamat: string;
   jumlah_relawan: number;
   foto: string[]; // URLs or file names from backend
-  status: string;
+  status: MisiStatus;
   createdAt: string;
   updatedAt: string;
 }
