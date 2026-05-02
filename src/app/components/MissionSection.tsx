@@ -14,7 +14,7 @@ interface Mission {
 }
 
 export default function MissionSection() {
-  const { setRedirectTo, token, user, openModal, clearAuth } = useAuthStore();
+  const { setRedirectTo, token, openModal } = useAuthStore();
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -28,42 +28,42 @@ export default function MissionSection() {
     // Simulasi sementara
     setMissions([
       {
-        id: "1",
+        id: "ms-1",
         title: "Distribusi Bantuan Bencana",
         location: "Torniang, Aceh Timur",
         volunteers: "80 / 100",
         status: "Open",
       },
       {
-        id: "2",
+        id: "ms-2",
         title: "Tanggap Banjir",
         location: "Tapanuli Utara, Sumatra Utara",
         volunteers: "75 / 100",
         status: "Open",
       },
       {
-        id: "3",
+        id: "ms-3",
         title: "Peduli Lansia",
         location: "Jakarta Barat, DKI Jakarta",
         volunteers: "15 / 20",
         status: "Open",
       },
       {
-        id: "4",
+        id: "ms-4",
         title: "Green Action",
         location: "Cisarua, Jawa Barat",
         volunteers: "25 / 50",
         status: "Open",
       },
       {
-        id: "5",
+        id: "ms-5",
         title: "Gerakan Papua Mengajar",
         location: "Nabire, Papua Tengah",
         volunteers: "30 / 50",
         status: "Open",
       },
       {
-        id: "6",
+        id: "ms-6",
         title: "Sehat Setara",
         location: "Yogyakarta",
         volunteers: "25 / 50",
