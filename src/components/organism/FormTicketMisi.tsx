@@ -6,10 +6,9 @@ import { MisiService } from '@/services/MisiService';
 import { CreateMisiRequest } from '@/types/misi';
 import Input from '../atoms/Input';
 import TextArea from '../atoms/TextArea';
-import Select from '../atoms/Select';
-import Button from '../atoms/Button';
 import FileUpload from '../atoms/FileUpload';
 import FormField from '../molecules/FormField';
+import axios from 'axios';
 
 const CATEGORY_OPTIONS = [
   { label: 'Bencana Alam', value: 'Bencana Alam' },
@@ -86,8 +85,12 @@ const FormTicketMisi: React.FC = () => {
         foto: fotos,
       });
       router.push('/dashboard/pelapor');
-    } catch (error: any) {
-      setApiError(error.response?.data?.error || 'Gagal membuat misi. Silakan coba lagi.');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setApiError(error.response?.data?.error || 'Gagal membuat misi. Silakan coba lagi.');
+      } else {
+        setApiError('Terjadi kesalahan yang tidak diketahui.');
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Button from '@/components/atoms/Button';
 import Sidebar from '@/components/organism/Sidebar';
@@ -19,36 +19,36 @@ export default function PelaporDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchAllMissions();
-  }, []);
-
-  useEffect(() => {
-    fetchFilteredMissions();
+  const fetchFilteredMissions = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await MisiService.getByPelapor(activeTab);
+      setMissions(data);
+    } catch (err: unknown) {
+      setError('Gagal memuat data misi. Silakan coba lagi.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   }, [activeTab]);
 
-  const fetchAllMissions = async () => {
+  const fetchAllMissions = useCallback(async () => {
     try {
       const data = await MisiService.getByPelapor('All');
       setAllMissions(data);
     } catch (err) {
       console.error('Failed to fetch global stats:', err);
     }
-  };
+  }, []);
 
-  const fetchFilteredMissions = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await MisiService.getByPelapor(activeTab);
-      setMissions(data);
-    } catch (err: any) {
-      setError('Gagal memuat data misi. Silakan coba lagi.');
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    fetchAllMissions();
+  }, [fetchAllMissions]);
+
+  useEffect(() => {
+    fetchFilteredMissions();
+  }, [fetchFilteredMissions]);
 
   return (
     <div className="flex min-h-screen bg-[#EAF0FA]">

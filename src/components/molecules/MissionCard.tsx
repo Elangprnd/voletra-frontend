@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Misi } from '@/types/misi';
 import StatusBadge from '../atoms/StatusBadge';
-import Button from '../atoms/Button';
 
 interface MissionCardProps {
   misi: Misi;
@@ -17,10 +17,11 @@ const MissionCard: React.FC<MissionCardProps> = ({ misi }) => {
   return (
     <div className="bg-white rounded-[10px] shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow">
       <div className="h-48 relative">
-        <img 
+        <Image 
           src={thumbnail} 
           alt={misi.judul} 
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
         <div className="absolute top-4 left-4">
           <StatusBadge status={misi.status} />
