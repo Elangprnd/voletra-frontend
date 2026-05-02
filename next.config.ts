@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "ui-avatars.com",
+        pathname: "/api/**",
+      },
+      {
+        protocol: "https",
         hostname: "via.placeholder.com",
         pathname: "/**",
       },
