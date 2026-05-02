@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuthStore } from '@/app/store/authStore';
 
 interface SidebarProps {
@@ -72,11 +73,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab = 'home' }) => {
 
       <div className="p-4 border-t flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-            <img 
+          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden relative">
+            <Image 
               src={`https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=random`} 
               alt="Profile" 
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
           <span className="font-medium text-gray-800">{user?.name || 'Sopo'}</span>
