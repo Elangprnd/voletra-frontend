@@ -42,6 +42,7 @@ export default function Hero() {
             alt="Volunteers"
             width={500}
             height={500}
+            loading="eager"
             className="rounded-3xl object-cover"
           />
         </div>

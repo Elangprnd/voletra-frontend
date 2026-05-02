@@ -26,8 +26,9 @@ export default function Navbar() {
           <Image
             src="/icons/logo_voletra.png"
             alt="Voletra"
-            width={36}
-            height={36}
+            width={32}
+            height={32}
+            style={{ width: 'auto' }}
           />
           <span className="font-bold text-primary-normal text-lg tracking-wide">
             VOLETRA
@@ -130,6 +131,7 @@ export default function Navbar() {
             alt="Voletra"
             width={32}
             height={32}
+            style={{ width: 'auto' }}
           />
           <span className="font-bold text-primary-normal">VOLETRA</span>
         </div>

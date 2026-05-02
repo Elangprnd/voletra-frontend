@@ -2,7 +2,17 @@
 import Hero from "./components/organism/Hero";
 import AuthModal from "./components/organism/AuthModal";
 import MissionSection from "./components/MissionSection";
+import dynamic from "next/dynamic";
 import { useAuthStore } from "./store/authStore";
+
+const MapWrapper = dynamic(() => import('@/app/components/organism/MapWrapper'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[500px] bg-gray-100 rounded-2xl flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-primary-normal border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+})
 
 export default function Home() {
   const { token, openModal } = useAuthStore();
@@ -60,8 +70,8 @@ export default function Home() {
           </div>
 
           {/* Map Placeholder */}
-          <div className="w-full h-72 bg-gray-100 rounded-2xl mb-8 flex items-center justify-center text-gray-400 text-sm border border-gray-200">
-            🗺️ Map akan ditampilkan di sini (CAP-71)
+          <div className="w-full h-72 bg-gray-100 rounded-2xl mb-40 flex items-center justify-center text-gray-400 text-sm border border-gray-200">
+            <MapWrapper />
           </div>
 
           {/* Mission Cards */}

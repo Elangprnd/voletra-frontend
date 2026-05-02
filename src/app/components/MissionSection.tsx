@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 interface Mission {
@@ -13,9 +14,10 @@ interface Mission {
 }
 
 export default function MissionSection() {
-  const { token, user, openModal, clearAuth } = useAuthStore();
+  const { setRedirectTo, token, user, openModal, clearAuth } = useAuthStore();
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     // Nanti ganti URL dengan API backend
@@ -91,18 +93,21 @@ export default function MissionSection() {
               </span>
             </div>
             <div className="text-xs text-gray-500 flex items-center gap-1 mb-1">
-              <Image src="/icons/map-pin.svg" width={17} height={18} alt="📍" />
+              <Image src="/icons/map-pin.svg" width={17} height={18} alt="📍" style={{ width: 'auto' }} />
               {mission.location}
             </div>
             <p className="text-xs text-gray-500 flex items-center gap-1 mb-4">
-              <Image src="/icons/users.svg" width={17} height={18} alt="👥" />
+              <Image src="/icons/users.svg" width={17} height={18} alt="👥" style={{ width: 'auto' }} />
               {mission.volunteers} Volunteers
             </p>
             <button
               className="w-full bg-primary-normal text-white py-2 rounded-lg text-sm font-semibold hover:bg-primary-normalHover transition-colors"
               onClick={() => {
                 if (!token) {
+                  setRedirectTo("/peta-misi");
                   openModal();
+                } else {
+                  router.push(`/misi/${mission.id}`);
                 }
               }}
             >

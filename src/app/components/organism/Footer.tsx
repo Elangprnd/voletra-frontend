@@ -13,6 +13,7 @@ export default function Footer() {
               alt="Voletra"
               width={32}
               height={32}
+              style={{ width: 'auto' }}
             />
             <span className="font-bold text-lg tracking-wide">VOLETRA</span>
           </div>
