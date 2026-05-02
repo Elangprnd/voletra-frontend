@@ -1,13 +1,31 @@
 "use client";
 import { useState } from "react";
 import { useAuthStore } from "@/app/store/authStore";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 export default function AuthModal() {
-  const { isModalOpen, closeModal } = useAuthStore();
+  const { setAuth, redirectTo, clearRedirectTo, isModalOpen, closeModal } = useAuthStore();
   const [tab, setTab] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter()
+
+  const handleLogin = () => {
+    // simulasi login sukses
+    setAuth("token123", "user", {
+      id: "1",
+      email,
+      name: "User",
+    });
+
+    closeModal();
+
+    if (redirectTo) {
+      router.push(redirectTo);
+      clearRedirectTo();
+    }
+  };
 
   if (!isModalOpen) return null;
 
@@ -110,7 +128,9 @@ export default function AuthModal() {
               </div>
 
               {/* Submit */}
-              <button className="w-full bg-primary-normal text-white py-3 rounded-lg font-semibold text-sm hover:bg-primary-normalHover transition-colors mb-3">
+              <button 
+              onClick={handleLogin}
+              className="w-full bg-primary-normal text-white py-3 rounded-lg font-semibold text-sm hover:bg-primary-normalHover transition-colors mb-3">
                 Login
               </button>
 

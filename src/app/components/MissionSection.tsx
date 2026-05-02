@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 interface Mission {
@@ -13,52 +14,64 @@ interface Mission {
 }
 
 export default function MissionSection() {
-  const { token, openModal } = useAuthStore();
-  const [missions] = useState<Mission[]>([
-    {
-      id: "1",
-      title: "Distribusi Bantuan Bencana",
-      location: "Torniang, Aceh Timur",
-      volunteers: "80 / 100",
-      status: "Open",
-    },
-    {
-      id: "2",
-      title: "Tanggap Banjir",
-      location: "Tapanuli Utara, Sumatra Utara",
-      volunteers: "75 / 100",
-      status: "Open",
-    },
-    {
-      id: "3",
-      title: "Peduli Lansia",
-      location: "Jakarta Barat, DKI Jakarta",
-      volunteers: "15 / 20",
-      status: "Open",
-    },
-    {
-      id: "4",
-      title: "Green Action",
-      location: "Cisarua, Jawa Barat",
-      volunteers: "25 / 50",
-      status: "Open",
-    },
-    {
-      id: "5",
-      title: "Gerakan Papua Mengajar",
-      location: "Nabire, Papua Tengah",
-      volunteers: "30 / 50",
-      status: "Open",
-    },
-    {
-      id: "6",
-      title: "Sehat Setara",
-      location: "Yogyakarta",
-      volunteers: "25 / 50",
-      status: "Open",
-    },
-  ]);
-  const [loading] = useState(false);
+  const { setRedirectTo, token, user, openModal, clearAuth } = useAuthStore();
+  const [missions, setMissions] = useState<Mission[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Nanti ganti URL dengan API backend
+    // fetch('https://api.voletra.com/missions')
+    //   .then(res => res.json())
+    //   .then(data => { setMissions(data); setLoading(false) })
+
+    // Simulasi sementara
+    setMissions([
+      {
+        id: "1",
+        title: "Distribusi Bantuan Bencana",
+        location: "Torniang, Aceh Timur",
+        volunteers: "80 / 100",
+        status: "Open",
+      },
+      {
+        id: "2",
+        title: "Tanggap Banjir",
+        location: "Tapanuli Utara, Sumatra Utara",
+        volunteers: "75 / 100",
+        status: "Open",
+      },
+      {
+        id: "3",
+        title: "Peduli Lansia",
+        location: "Jakarta Barat, DKI Jakarta",
+        volunteers: "15 / 20",
+        status: "Open",
+      },
+      {
+        id: "4",
+        title: "Green Action",
+        location: "Cisarua, Jawa Barat",
+        volunteers: "25 / 50",
+        status: "Open",
+      },
+      {
+        id: "5",
+        title: "Gerakan Papua Mengajar",
+        location: "Nabire, Papua Tengah",
+        volunteers: "30 / 50",
+        status: "Open",
+      },
+      {
+        id: "6",
+        title: "Sehat Setara",
+        location: "Yogyakarta",
+        volunteers: "25 / 50",
+        status: "Open",
+      },
+    ]);
+    setLoading(false);
+  }, []);
 
   if (loading) return <div>Loading...</div>;
 
@@ -80,18 +93,21 @@ export default function MissionSection() {
               </span>
             </div>
             <div className="text-xs text-gray-500 flex items-center gap-1 mb-1">
-              <Image src="/icons/map-pin.svg" width={17} height={18} alt="📍" />
+              <Image src="/icons/map-pin.svg" width={17} height={18} alt="📍" style={{ width: 'auto' }} />
               {mission.location}
             </div>
             <p className="text-xs text-gray-500 flex items-center gap-1 mb-4">
-              <Image src="/icons/users.svg" width={17} height={18} alt="👥" />
+              <Image src="/icons/users.svg" width={17} height={18} alt="👥" style={{ width: 'auto' }} />
               {mission.volunteers} Volunteers
             </p>
             <button
               className="w-full bg-primary-normal text-white py-2 rounded-lg text-sm font-semibold hover:bg-primary-normalHover transition-colors"
               onClick={() => {
                 if (!token) {
+                  setRedirectTo("/peta-misi");
                   openModal();
+                } else {
+                  router.push(`/misi/${mission.id}`);
                 }
               }}
             >
