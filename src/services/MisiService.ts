@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/axios';
-import { CreateMisiRequest, Misi } from '@/types/misi';
+import { CreateMisiRequest, Misi, Applicant } from '@/types/misi';
 
 export const MisiService = {
   getAll: async (): Promise<Misi[]> => {
@@ -13,6 +13,18 @@ export const MisiService = {
   getByPelapor: async (status?: string): Promise<Misi[]> => {
     const params = status && status !== 'All' ? { status } : {};
     const response = await axiosInstance.get('/misi/pelapor/me', { params });
+    return response.data;
+  },
+  getApplicants: async (id: string): Promise<Applicant[]> => {
+    const response = await axiosInstance.get(`/misi/${id}/applicants`);
+    return response.data;
+  },
+  approveApplicant: async (applyId: string): Promise<void> => {
+    const response = await axiosInstance.patch(`/apply/${applyId}/approve`);
+    return response.data;
+  },
+  rejectApplicant: async (applyId: string): Promise<void> => {
+    const response = await axiosInstance.patch(`/apply/${applyId}/reject`);
     return response.data;
   },
   create: async (data: CreateMisiRequest): Promise<Misi> => {
