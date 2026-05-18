@@ -14,6 +14,7 @@ export interface Misi {
   tanggal_selesai?: string;
   foto: string[]; // URLs or file names from backend
   status: MisiStatus;
+  mode?: 'Online' | 'Offline';
   createdAt: string;
   updatedAt: string;
 }

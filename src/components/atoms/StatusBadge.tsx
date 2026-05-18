@@ -9,7 +9,11 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const getStyles = () => {
     switch (status) {
       case 'Open':
-        return 'bg-[#E7F7EF] text-[#0D9488] border-[#B2E7D1]'; // Teal/Green
+        return 'bg-primary-normal text-[#FFFFFF]'; // Teal/Green
+      case 'Online':
+        return 'bg-[#FFFFFF] text-primary-normal border-primary-normal';
+      case 'Offline':
+        return 'bg-[#FFFFFF] text-primary-normal border-primary-normal';
       case 'Ongoing':
         return 'bg-[#EAF0FA] text-[#2869CA] border-[#BCD1EF]'; // Primary Blue
       case 'Completed':
