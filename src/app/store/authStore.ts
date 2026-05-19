@@ -4,17 +4,18 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export interface User {
   id: string;
   email: string;
-  name: string;
+  name?: string;
+  institution_name?: string;
 }
 
 interface AuthState {
   token: string | null;
-  role: string | null;
+  role: "volunteer" | "lembaga" | "super_admin" | null;
   user: User | null;
   isModalOpen: boolean;
   redirectTo: string | null;
 
-  setAuth: (token: string, role: string, user: User) => void;
+  setAuth: (token: string, role: "volunteer" | "lembaga" | "super_admin", user: User) => void;
   clearAuth: () => void;
   openModal: () => void;
   closeModal: () => void;

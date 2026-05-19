@@ -1,22 +1,36 @@
 export interface LoginRequest {
   email: string;
   password?: string;
-  // Add other fields as necessary
 }
 
-export interface RegisterRequest {
-  email: string;
+export interface RegisterVolunteerRequest {
   name: string;
+  email: string;
   password?: string;
-  // Add other fields as necessary
+  confirm_password?: string;
+  role: "volunteer";
+}
+
+export interface RegisterLembagaRequest {
+  institution_name: string;
+  email: string;
+  password?: string;
+  confirm_password?: string;
+  role: "lembaga";
 }
 
 export interface AuthResponse {
-  token: string;
-  role: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    role: "volunteer" | "lembaga" | "super_admin";
+    redirect_url?: string;
+    user?: {
+      id: string;
+      email: string;
+      name?: string;
+      institution_name?: string;
+    };
   };
 }
