@@ -4,12 +4,8 @@ import { useRouter } from "next/navigation";
 export default function RoleModal() {
   const router = useRouter();
 
-  const handlePilih = async (role: "pelapor" | "relawan") => {
-    if (role === "pelapor") {
-      router.push("/dashboard/pelapor");
-    } else {
-      router.push("/dashboard/relawan");
-    }
+  const handlePilih = async (role: "lembaga" | "volunteer") => {
+    router.push(`/register?role=${role}`);
   };
 
   return (
@@ -25,7 +21,7 @@ export default function RoleModal() {
             </div>
             <div className="flex p-5 gap-10">
               <div
-                onClick={() => handlePilih("relawan")}
+                onClick={() => handlePilih("volunteer")}
                 className="group relative overflow-hidden rounded-2xl cursor-pointer transition duration-300 hover:scale-105"
               >
                 <img
@@ -36,9 +32,10 @@ export default function RoleModal() {
                   className="rounded-2xl object-cover"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300"></div>
+                <p className="text-center font-semibold mt-2">Volunteer (Relawan)</p>
               </div>
               <div
-                onClick={() => handlePilih("pelapor")}
+                onClick={() => handlePilih("lembaga")}
                 className="group relative overflow-hidden rounded-2xl cursor-pointer transition duration-300 hover:scale-105"
               >
                 <img
@@ -49,6 +46,7 @@ export default function RoleModal() {
                   className="rounded-2xl object-cover"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300"></div>
+                <p className="text-center font-semibold mt-2">Organization (Lembaga)</p>
               </div>
             </div>
           </div>

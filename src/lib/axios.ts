@@ -3,6 +3,7 @@ import { useAuthStore } from '@/app/store/authStore';
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true, // Crucial for sending cookies to backend
   headers: {
     'Content-Type': 'application/json',
   },
@@ -11,8 +12,9 @@ const axiosInstance: AxiosInstance = axios.create({
 // Request Interceptor
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    // If we have a token in store, send it as Bearer (fallback for non-cookie auth)
     const token = useAuthStore.getState().token;
-    if (token) {
+    if (token && token !== 'session') {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -26,35 +28,14 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error) => {
-    const originalRequest = error.config;
-
-    // Check if error is 401 and not a retry
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      try {
-        // Attempt to refresh token
-        // Note: You might need a separate axios instance for refresh to avoid infinite loops
-        // or just use the base axios if refresh doesn't need Authorization header
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {}, {
-          withCredentials: true // If using cookies for refresh token
-        });
-
-        const { token, role, user } = response.data;
-
-        // Update store
-        useAuthStore.getState().setAuth(token, role, user);
-
-        // Update Authorization header and retry
-        originalRequest.headers.Authorization = `Bearer ${token}`;
-        return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        // If refresh fails, clear auth and redirect to login
-        useAuthStore.getState().clearAuth();
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
-        }
-        return Promise.reject(refreshError);
+    // Handle 401 Unauthorized
+    if (error.response?.status === 401) {
+      // Clear auth state on the frontend
+      useAuthStore.getState().clearAuth();
+      
+      // Redirect to login only if we are in the browser
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
       }
     }
 

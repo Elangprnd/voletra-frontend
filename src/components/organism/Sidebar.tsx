@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuthStore } from '@/app/store/authStore';
+import { AuthService } from '@/services/AuthService';
 
 interface SidebarProps {
   activeTab?: 'home' | 'mission' | 'about';
@@ -11,6 +12,17 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeTab = 'home' }) => {
   const { user, clearAuth } = useAuthStore();
+
+  const handleLogout = async () => {
+    try {
+      await AuthService.logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      clearAuth();
+      window.location.href = "/";
+    }
+  };
 
   const menuItems = [
     {
@@ -28,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab = 'home' }) => {
       label: 'Mission',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
         </svg>
       ),
       href: '/dashboard/pelapor',
@@ -75,17 +87,18 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab = 'home' }) => {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden relative">
             <Image 
-              src={`https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=random`} 
+              src={`https://ui-avatars.com/api/?name=${user?.name || user?.institution_name || 'User'}&background=random`} 
               alt="Profile" 
               fill
               className="object-cover"
             />
           </div>
-          <span className="font-medium text-gray-800">{user?.name || 'Sopo'}</span>
+          <span className="font-medium text-gray-800 truncate max-w-[100px]">{user?.name || user?.institution_name || 'User'}</span>
         </div>
         <button 
-          onClick={() => clearAuth()}
+          onClick={handleLogout}
           className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all"
+          title="Logout"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
