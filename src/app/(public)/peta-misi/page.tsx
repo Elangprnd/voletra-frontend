@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import AuthModal from "@/app/components/organism/AuthModal";
+import AuthModal from "@/components/organism/AuthModal";
 import MissionSection from "@/app/components/MissionSection";
 
 // Dynamic import agar Google Maps tidak SSR

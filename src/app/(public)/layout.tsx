@@ -1,5 +1,6 @@
-import Navbar from "../components/organism/Navbar";
-import Footer from "../components/organism/Footer";
+import Navbar from "../../components/organism/Navbar";
+import Footer from "../../components/organism/Footer";
+import AuthModal from "@/components/organism/AuthModal";
 
 export default function PublicLayout({
   children,
@@ -8,7 +9,10 @@ export default function PublicLayout({
 }) {
   return (
     <>
+      <Navbar />
       {children}
+      <AuthModal />
+      <Footer />
     </>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import Hero from "../components/organism/Hero";
-import AuthModal from "../components/organism/AuthModal";
-import MissionSection from "../components/MissionSection";
+import Hero from "@/components/organism/Hero";
+import AuthModal from "../../components/organism/AuthModal";
+import MissionSection from "@/components/organism/PublicMissionSection";
 import dynamic from "next/dynamic";
 
 const MapWrapper = dynamic(
-  () => import("@/app/components/organism/MapWrapper"),
+  () => import("@/components/molecules/MapWrapper"),
   {
     ssr: false,
     loading: () => (

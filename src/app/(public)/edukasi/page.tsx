@@ -1,4 +1,4 @@
-import AuthModal from "@/app/components/organism/AuthModal";
+import AuthModal from "@/components/organism/AuthModal";
 import Image from "next/image";
 
 export default function EdukasiPage() {
