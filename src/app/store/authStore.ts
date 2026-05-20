@@ -4,18 +4,17 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export interface User {
   id: string;
   email: string;
-  name?: string;
-  institution_name?: string;
+  name: string;
 }
 
 interface AuthState {
   token: string | null;
-  role: "volunteer" | "lembaga" | "super_admin" | null;
+  role: string | null;
   user: User | null;
   isModalOpen: boolean;
   redirectTo: string | null;
 
-  setAuth: (token: string, role: "volunteer" | "lembaga" | "super_admin", user: User) => void;
+  setAuth: (token: string, role: string | null, user: User) => void;
   clearAuth: () => void;
   openModal: () => void;
   closeModal: () => void;
@@ -39,18 +38,18 @@ export const useAuthStore = create<AuthState>()(
 
       setAuth: (token, role, user) => {
         set({ token, role, user });
-        // Set cookie for middleware
         if (typeof window !== "undefined") {
           document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Lax`;
+          document.cookie = `role=${role}; path=/; max-age=86400; SameSite=Lax`; // ← tambah ini
         }
       },
 
       clearAuth: () => {
         set({ token: null, role: null, user: null });
-        // Clear cookie
         if (typeof window !== "undefined") {
-          document.cookie =
-            "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          document.cookie ="token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          document.cookie ="role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"; // ← tambah ini
+          localStorage.removeItem("auth-storage");
         }
       },
     }),
