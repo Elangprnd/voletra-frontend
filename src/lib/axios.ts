@@ -33,9 +33,9 @@ axiosInstance.interceptors.response.use(
       // Clear auth state on the frontend
       useAuthStore.getState().clearAuth();
       
-      // Redirect to login only if we are in the browser
+      // Redirect to home with auth param only if we are in the browser
       if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+        window.location.href = '/?auth=login';
       }
     }
 
