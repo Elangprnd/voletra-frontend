@@ -1,33 +1,68 @@
 "use client";
 import { useState } from "react";
 import { useAuthStore } from "@/app/store/authStore";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { AuthService } from "@/services/AuthService";
 import { getErrorMessage, getFieldErrors } from "@/lib/error";
+import { useEffect } from "react";
 
 export default function AuthModal() {
-  const { setAuth, redirectTo, clearRedirectTo, isModalOpen, closeModal } = useAuthStore();
+  const { setAuth, redirectTo, setRedirectTo, clearRedirectTo, isModalOpen, openModal, closeModal } = useAuthStore();
   const [tab, setTab] = useState<"login" | "signup">("login");
 
   // shared
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   // signup only
   const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [role, setRole] = useState<"volunteer" | "lembaga">("volunteer");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const authParam = searchParams.get("auth");
+    const redirectParam = searchParams.get("redirect");
+
+    if (authParam) {
+      if (authParam === "login") {
+        setTab("login");
+        openModal();
+      } else if (authParam === "register" || authParam === "signup") {
+        setTab("signup");
+        openModal();
+      }
+
+      if (redirectParam) {
+        setRedirectTo(redirectParam);
+      }
+
+      // Clear the query params to prevent reopening on refresh
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("auth");
+      params.delete("redirect");
+      const query = params.toString();
+      const newPath = window.location.pathname + (query ? `?${query}` : "");
+      router.replace(newPath);
+    }
+  }, [searchParams, openModal, setRedirectTo, router]);
 
   const resetForm = () => {
     setEmail("");
     setPassword("");
+    setShowPassword(false);
     setName("");
     setConfirmPassword("");
+    setShowConfirmPassword(false);
+    setRole("volunteer");
     setError("");
     setFieldErrors({});
   };
@@ -48,10 +83,11 @@ export default function AuthModal() {
         resetForm();
 
         if (redirectTo) {
-          router.push(redirectTo);
+          router.replace(redirectTo);
           clearRedirectTo();
         } else {
-          router.push(response.data.role === "volunteer" ? "/dashboard/relawan" : "/dashboard/pelapor");
+          const path = response.data.role === "volunteer" ? "/dashboard/relawan" : "/dashboard/pelapor";
+          router.replace(path);
         }
       }
     } catch (err: unknown) {
@@ -67,13 +103,21 @@ export default function AuthModal() {
     setError("");
     setFieldErrors({});
     try {
-      const response = await AuthService.register({ email, password, confirm_password: confirmPassword, name });
+      const response = await AuthService.register({ 
+        email, 
+        password, 
+        confirm_password: confirmPassword, 
+        name,
+        role 
+      });
       if (response.success) {
         setAuth(response.data.token, response.data.role, response.data.user);
         closeModal();
         resetForm();
-        // Role null → belum pilih role → arahkan ke pilih-role
-        router.push(response.data.role ? "/dashboard" : "/pilih-role");
+        
+        // Langsung arahkan ke dashboard sesuai role yang baru saja dipilih
+        const dashboardPath = response.data.role === "volunteer" ? "/dashboard/relawan" : "/dashboard/pelapor";
+        router.replace(dashboardPath);
       }
     } catch (err: unknown) {
       setFieldErrors(getFieldErrors(err));
@@ -156,12 +200,23 @@ export default function AuthModal() {
                   <div className={`border rounded-lg px-3 py-2 flex items-center gap-2 ${fieldErrors.password ? "border-red-400" : "border-gray-200"}`}>
                     <Image src="/icons/lock.svg" alt="lock" width={20} height={20} />
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full text-sm outline-none"
                       placeholder="••••••••"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-gray-400 hover:text-gray-600 focus:outline-none"
+                    >
+                      {showPassword ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                      )}
+                    </button>
                   </div>
                   {fieldErrors.password && <p className="text-red-500 text-xs mt-1">{fieldErrors.password[0]}</p>}
                 </div>
@@ -221,12 +276,23 @@ export default function AuthModal() {
                   <div className={`border rounded-lg px-3 py-2 flex items-center gap-2 ${fieldErrors.password ? "border-red-400" : "border-gray-200"}`}>
                     <Image src="/icons/lock.svg" alt="lock" width={20} height={20} />
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full text-sm outline-none"
                       placeholder="••••••••"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-gray-400 hover:text-gray-600 focus:outline-none"
+                    >
+                      {showPassword ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                      )}
+                    </button>
                   </div>
                   {fieldErrors.password && <p className="text-red-500 text-xs mt-1">{fieldErrors.password[0]}</p>}
                 </div>
@@ -235,14 +301,55 @@ export default function AuthModal() {
                   <div className={`border rounded-lg px-3 py-2 flex items-center gap-2 ${fieldErrors.confirm_password ? "border-red-400" : "border-gray-200"}`}>
                     <Image src="/icons/lock.svg" alt="lock" width={20} height={20} />
                     <input
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="w-full text-sm outline-none"
                       placeholder="••••••••"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="text-gray-400 hover:text-gray-600 focus:outline-none"
+                    >
+                      {showConfirmPassword ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                      )}
+                    </button>
                   </div>
                   {fieldErrors.confirm_password && <p className="text-red-500 text-xs mt-1">{fieldErrors.confirm_password[0]}</p>}
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray-600 mb-2 block">Register as</label>
+                  <div className="flex gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setRole("volunteer")}
+                      className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                        role === "volunteer" 
+                          ? "border-primary-normal bg-primary-light text-primary-normal shadow-sm" 
+                          : "border-gray-200 text-gray-500 hover:border-gray-300"
+                      }`}
+                    >
+                      <Image src="/icons/volunteer.png" alt="volunteer" width={20} height={20} className={role === "volunteer" ? "" : "grayscale opacity-50"} />
+                      Volunteer
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRole("lembaga")}
+                      className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                        role === "lembaga" 
+                          ? "border-primary-normal bg-primary-light text-primary-normal shadow-sm" 
+                          : "border-gray-200 text-gray-500 hover:border-gray-300"
+                      }`}
+                    >
+                      <Image src="/icons/organization.png" alt="organization" width={20} height={20} className={role === "lembaga" ? "" : "grayscale opacity-50"} />
+                      Institution
+                    </button>
+                  </div>
                 </div>
               </div>
 
